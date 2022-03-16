@@ -4,6 +4,12 @@ const asyncHandler = require("express-async-handler");
 
 const users = require("../models/usersModel");
 
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+};
+
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -59,6 +65,7 @@ const loginUser = asyncHandler(async (req, res) => {
       id: userExist.id,
       name: userExist.name,
       email: userExist.email,
+      token: generateToken(userExist.id),
     });
   } else {
     res.status(400);
@@ -66,7 +73,15 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 });
 
-const profileUser = asyncHandler(async (req, res) => {});
+const profileUser = asyncHandler(async (req, res) => {
+  const { id, email, name } = req.user;
+
+  res.status(200).json({
+    id,
+    name,
+    email,
+  });
+});
 
 module.exports = {
   registerUser,
