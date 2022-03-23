@@ -48,7 +48,7 @@ const updateTask = async (req, res) => {
 };
 
 const deleteTask = async (req, res) => {
-  const searchTask = tasks.findById(req.params.id);
+  const searchTask = await tasks.findById(req.params.id);
 
   if (!searchTask) {
     res.status(400);
@@ -60,7 +60,7 @@ const deleteTask = async (req, res) => {
     throw new Error("Acceso No Autorizado");
   }
 
-  await search.remove();
+  await searchTask.remove();
 
   res.status(200).json({ id: req.params.id });
 };
